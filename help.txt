@@ -1,0 +1,8 @@
+
+    start - start a server
+    download/install - download and install a server.jar file
+    update - update a server
+    list - list servers
+    delete/remove - remove a server
+    clear - clear the screen
+    exit - exit the program

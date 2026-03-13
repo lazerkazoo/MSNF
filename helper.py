@@ -85,13 +85,18 @@ def get_servers():
     return listdir(f"{expanduser('~')}/Documents/Servers")
 
 
-def get_server_dir(server):
+def get_server_dir(server=None):
+    if server is None:
+        server = choose_server()
     return f"{expanduser('~')}/Documents/Servers/{server}"
 
 
 def print_servers():
     print()
     servers = get_servers()
+    if len(servers) == 0:
+        print("no servers found\n")
+        return
     for i, server in enumerate(servers):
         print(f"[{i + 1}] {server}")
     print()
@@ -108,13 +113,17 @@ def choose_server():
 
 
 # Server management
-def download_server(server, version=None):
+def download_server(server=None, version=None):
+    if server is None:
+        server = input("server name -> ")
     if version is None:
         version = choose_version()
     run(["./download.sh", version, get_server_dir(server)])
 
 
-def start_server(server):
+def start_server(server=None):
+    if server is None:
+        server = choose_server()
     run(
         "./startup.sh",
         cwd=f"{expanduser('~')}/Documents/Servers/{server}/",
