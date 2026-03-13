@@ -72,9 +72,6 @@ def choose_version(available_versions=None):
     versions = (
         get_available_versions() if available_versions is None else available_versions
     )
-    if not versions:
-        print("\nno version chosen\n")
-        return None
     choice = input(f"choose version [{versions[0]}-{versions[-1]}] -> ")
     available_versions = versions
     return choice
