@@ -36,10 +36,10 @@ def get_versions():
     run(
         [
             "curl",
-            "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json",
-            "--output",
-            "dog.json",
             "-s",
+            "-o",
+            "dog.json",
+            "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json",
         ]
     )
     return load_json("dog.json")
@@ -65,8 +65,8 @@ def check_version_ok(version):
         check_output(
             [
                 "curl",
-                f"https://fill.papermc.io/v3/projects/paper/versions/{version}/builds",
                 "-s",
+                f"https://fill.papermc.io/v3/projects/paper/versions/{version}/builds",
             ]
         )
     )
@@ -97,6 +97,12 @@ def get_server_dir(server=None):
     if server is None:
         server = choose_server()
     return f"{expanduser('~')}/Documents/Servers/{server}"
+
+
+def get_server_version(server=None):
+    if server is None:
+        server = choose_server()
+    return load_json(f"{get_server_dir}/version.json")["version"]
 
 
 def print_servers():
@@ -147,3 +153,39 @@ def remove_plugin(server=None, plugin=None):
     if plugin is None:
         plugin = choose_plugin(server)
     run(["rm", f"{get_server_dir(server)}/plugins/{plugin}"])
+
+
+def search_plugins(query, version):
+    return loads(
+        check_output(
+            [
+                "curl",
+                "-s",
+                f"https://api.modrinth.com/v2/search?query={query}&limit=3&facets=%5B%5B%22project_type%3Aplugin%22%5D%2C%5B%22categories%3Apaper%22%5D%2C%5B%22versions%3A{version}%22%5D%5D",
+            ]
+        )
+    )
+
+
+def search_versions(project_data):
+    return loads(
+        check_output(
+            [
+                "curl",
+                "-s",
+                f"https://api.modrinth.com/v2/project/{project_data['slug']}/version?include_changelog=false",
+            ]
+        )
+    )
+
+
+def remove_unwanted_versions(versions, mc):
+    for v in versions:
+        if mc not in v["game_versions"] or "paper" not in v["loaders"]:
+            versions.remove(v)
+
+
+def download_plugin(versions, slug, server):
+    newest = versions[0]["files"][0]
+    url = newest["url"]
+    run(["curl", "-s", "-o", f"{get_server_dir(server)}/plugins/{slug}", url])
