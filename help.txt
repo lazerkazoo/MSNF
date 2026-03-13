@@ -1,8 +1,11 @@
 
+help - show this list
+plugin help - list all plugin options
+
 start - start a server
-download/install - download a server.jar file
+install - download a server.jar file
 update - update a server
 list - list servers
-delete/remove - remove a server
+remove - remove a server
 clear - clear the screen
 exit - exit the program

@@ -1,0 +1,5 @@
+
+(all must start with 'plugin ')
+install - install a plugin from modrinth.com
+list - current plugins
+remove - remove an installed plugin

@@ -20,8 +20,12 @@ def print_list(lst):
     if len(lst) == 0:
         print("no items found")
         return
+    print()
     for i, item in enumerate(lst):
+        if isinstance(item, dict) and item.get("title"):
+            item = item["title"]
         print(f"[{i + 1}] {item}")
+    print()
 
 
 def choose(options):
@@ -102,13 +106,7 @@ def get_server_dir(server=None):
 def get_server_version(server=None):
     if server is None:
         server = choose_server()
-    return load_json(f"{get_server_dir}/version.json")["version"]
-
-
-def print_servers():
-    print()
-    print_list(get_servers())
-    print()
+    return load_json(f"{get_server_dir(server)}/version.json")["version"]
 
 
 def choose_server():
@@ -137,7 +135,7 @@ def start_server(server=None):
 def get_plugins(server=None):
     if server is None:
         server = choose_server()
-    plugins_dir = f"{get_server_dir(server)}/plugins"
+    plugins_dir = f"{get_server_dir(server)}/plugins/"
     return listdir(plugins_dir)
 
 
@@ -155,13 +153,13 @@ def remove_plugin(server=None, plugin=None):
     run(["rm", f"{get_server_dir(server)}/plugins/{plugin}"])
 
 
-def search_plugins(query, version):
+def search_plugins(query, mc):
     return loads(
         check_output(
             [
                 "curl",
                 "-s",
-                f"https://api.modrinth.com/v2/search?query={query}&limit=3&facets=%5B%5B%22project_type%3Aplugin%22%5D%2C%5B%22categories%3Apaper%22%5D%2C%5B%22versions%3A{version}%22%5D%5D",
+                f"https://api.modrinth.com/v2/search?query={query}&limit=5&facets=%5B%5B%22project_type%3Aplugin%22%5D%2C%5B%22categories%3Apaper%22%5D%2C%5B%22versions%3A{mc}%22%5D%5D",
             ]
         )
     )
@@ -188,4 +186,4 @@ def remove_unwanted_versions(versions, mc):
 def download_plugin(versions, slug, server):
     newest = versions[0]["files"][0]
     url = newest["url"]
-    run(["curl", "-s", "-o", f"{get_server_dir(server)}/plugins/{slug}", url])
+    run(["curl", "-s", "-o", f"{get_server_dir(server)}/plugins/{slug}.jar", url])

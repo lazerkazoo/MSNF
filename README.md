@@ -9,5 +9,6 @@ python main.py
 - [x] remove server
 - [x] run server
 - [x] update mc version
+- [x] download plugins from site
 - [ ] update papermc version
-- [ ] download plugins from site
+- [ ] update plugins
