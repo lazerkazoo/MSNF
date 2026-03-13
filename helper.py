@@ -5,7 +5,7 @@ from os.path import expanduser
 from subprocess import check_output, run
 
 
-# File I/O
+# QOL
 def load_json(fp):
     with open(fp, "r") as f:
         return load(f)
@@ -14,6 +14,21 @@ def load_json(fp):
 def save_json(fp, obj):
     with open(fp, "w") as f:
         dump(obj, f)
+
+
+def print_list(lst):
+    if len(lst) == 0:
+        print("no items found")
+        return
+    for i, item in enumerate(lst):
+        print(f"[{i + 1}] {item}")
+
+
+def choose(options):
+    print_list(options)
+    choice = input("choose -> ")
+    choice = int(choice)
+    return options[choice - 1]
 
 
 # Version retrieval
@@ -62,7 +77,7 @@ def check_version_ok(version):
 
 def get_available_versions():
     versions = get_all_versions()
-    with ThreadPoolExecutor(max_workers=20) as executor:
+    with ThreadPoolExecutor(max_workers=30) as executor:
         results = list(executor.map(check_version_ok, versions))
     return [v for v, ok in zip(versions, results) if ok]
 
@@ -70,8 +85,7 @@ def get_available_versions():
 def choose_version():
     print("getting available versions...")
     versions = get_available_versions()
-    choice = input(f"choose version [{versions[0]}-{versions[-1]}] -> ")
-    return choice
+    return input(f"choose version [{versions[0]}-{versions[-1]}] -> ")
 
 
 # Server discovery
@@ -87,23 +101,12 @@ def get_server_dir(server=None):
 
 def print_servers():
     print()
-    servers = get_servers()
-    if len(servers) == 0:
-        print("no servers found\n")
-        return
-    for i, server in enumerate(servers):
-        print(f"[{i + 1}] {server}")
+    print_list(get_servers())
     print()
 
 
 def choose_server():
-    servers = get_servers()
-    if not servers:
-        return None
-    print_servers()
-    choice = input("choose -> ")
-    choice = int(choice)
-    return servers[choice - 1]
+    return choose(get_servers())
 
 
 # Server management
@@ -122,3 +125,25 @@ def start_server(server=None):
         "./startup.sh",
         cwd=f"{expanduser('~')}/Documents/Servers/{server}/",
     )
+
+
+# Plugin managerment
+def get_plugins(server=None):
+    if server is None:
+        server = choose_server()
+    plugins_dir = f"{get_server_dir(server)}/plugins"
+    return listdir(plugins_dir)
+
+
+def choose_plugin(server=None):
+    if server is None:
+        server = choose_server()
+    return choose(get_plugins(server))
+
+
+def remove_plugin(server=None, plugin=None):
+    if server is None:
+        server = choose_server()
+    if plugin is None:
+        plugin = choose_plugin(server)
+    run(["rm", f"{get_server_dir(server)}/plugins/{plugin}"])
