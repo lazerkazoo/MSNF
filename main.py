@@ -1,53 +1,53 @@
 from os.path import expanduser
 from subprocess import run
 
-from helper import get_available_versions, get_servers, start_server
+from helper import (
+    choose_server,
+    choose_version,
+    print_servers,
+    start_server,
+)
 
 available_versions = None
 print("type 'help' for available operations")
 
 
-def print_servers():
-    print()
-    servers = get_servers()
-    for i, server in enumerate(servers):
-        print(f"[{i + 1}] {server}")
-    print()
-
-
 def remove():
-    servers = get_servers()
-    print_servers()
-    choice = input("server -> ")
-    run(
-        ["rm", "-rf", f"{expanduser('~')}/Documents/Servers/{servers[int(choice) - 1]}"]
-    )
+    choice = choose_server()
+    run(["rm", "-rf", f"{expanduser('~')}/Documents/Servers/{choice}"])
 
 
 def start():
-    servers = get_servers()
-    print_servers()
-    choice = input("server -> ")
-    start_server(servers[int(choice) - 1])
+    choice = choose_server()
+    start_server(choice)
+
+
+def update():
+    server = choose_server()
+    version = choose_version(available_versions)
+    if version is None:
+        return
+    run(
+        [
+            "./download.sh",
+            version,
+            f"{expanduser('~')}/Documents/Servers/{server}",
+        ]
+    )
 
 
 def download():
-    global available_versions
-    if available_versions is None:
-        print("getting available versions...")
-        available_versions = get_available_versions()
-
-    version = input(
-        f"mc version [{available_versions[0]}-{available_versions[-1]}] -> "
-    )
     name = input("server name -> ")
+    version = choose_version(available_versions)
+    if version is None:
+        return
     run(["./download.sh", version, f"{expanduser('~')}/Documents/Servers/{name}"])
 
 
 def main():
     options = {
         "help": lambda: print(
-            "\nstart - start a server\nlist - list servers\nclear - clear the screen\ndownload/install - download and install a server.jar file\ndelete/remove - remove a server\nexit - exit the program\n"
+            "\nstart - start a server\nlist - list servers\nclear - clear the screen\ndownload/install - download and install a server.jar file\nupdate - update a server\ndelete/remove - remove a server\nexit - exit the program\n"
         ),
         "delete": remove,
         "remove": remove,
@@ -55,6 +55,7 @@ def main():
         "list": print_servers,
         "download": download,
         "install": download,
+        "update": update,
         "clear": lambda: run("clear"),
         "exit": exit,
     }

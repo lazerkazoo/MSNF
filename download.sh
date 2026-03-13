@@ -53,11 +53,12 @@ fi
 
 if [ "$PAPERMC_URL" != "null" ]; then
 	# Download the latest Paper version
-	mkdir -p "$2/"
+	mkdir -p "$2/plugins/"
 	curl -o "$2/server.jar" $PAPERMC_URL
 	echo "Download completed (version: $FOUND_VERSION)"
-  echo "#!/usr/bin/env sh
-  java -Xms4096M -Xmx4096M -jar $2/server.jar --nogui" > "$2/startup.sh"
+echo "#!/usr/bin/env sh
+java -Xms1G -Xmx4G -jar $2/server.jar --nogui" > "$2/startup.sh"
+  echo "eula=true" > "$2/eula.txt"
   chmod +x "$2/startup.sh"
 else
 	echo "No stable builds available for any version :("

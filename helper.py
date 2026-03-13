@@ -2,7 +2,7 @@ from concurrent.futures import ThreadPoolExecutor
 from json import dump, load, loads
 from os import listdir
 from os.path import expanduser
-from subprocess import call, check_output, run
+from subprocess import check_output, run
 
 
 def load_json(fp):
@@ -13,6 +13,41 @@ def load_json(fp):
 def save_json(fp, obj):
     with open(fp, "w") as f:
         dump(obj, f)
+
+
+def get_servers():
+    return listdir(f"{expanduser('~')}/Documents/Servers")
+
+
+def print_servers():
+    print()
+    servers = get_servers()
+    for i, server in enumerate(servers):
+        print(f"[{i + 1}] {server}")
+    print()
+
+
+def choose_server():
+    servers = get_servers()
+    if not servers:
+        return None
+    print_servers()
+    choice = input("choose -> ")
+    choice = int(choice)
+    return servers[choice - 1]
+
+
+def choose_version(available_versions):
+    print("getting available versions...")
+    versions = (
+        get_available_versions() if available_versions is None else available_versions
+    )
+    if not versions:
+        print("\nno version chosen\n")
+        return None
+    choice = input(f"choose version [{versions[0]}-{versions[-1]}] -> ")
+    available_versions = versions
+    return choice
 
 
 # getting versions
@@ -66,13 +101,9 @@ def check_version_ok(version):
     return True
 
 
-# startup servers
-def get_servers():
-    return listdir(f"{expanduser('~')}/Documents/Servers")
-
-
+# server startup
 def start_server(server):
     run(
-        ["tmux", "-c", "./startup.sh"],
+        "./startup.sh",
         cwd=f"{expanduser('~')}/Documents/Servers/{server}/",
     )
