@@ -52,7 +52,7 @@ if [ "$PAPERMC_URL" != "null" ]; then
 	curl -o "$2/server.jar" $PAPERMC_URL
 	echo "Download completed (version: $FOUND_VERSION)"
 echo "#!/usr/bin/env sh
-java -Xms1G -Xmx4G -jar $2/server.jar --nogui" > "$2/startup.sh"
+java -Xms1G -Xmx4G -jar $2/server.jar" > "$2/startup.sh"
   echo "eula=true" > "$2/eula.txt"
   echo "{\"version\": \"$1\"}" > "$2/version.json"
   chmod +x "$2/startup.sh"

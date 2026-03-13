@@ -41,7 +41,7 @@ def choose_server():
     return servers[choice - 1]
 
 
-def choose_version(available_versions):
+def choose_version(available_versions=None):
     print("getting available versions...")
     versions = (
         get_available_versions() if available_versions is None else available_versions
@@ -52,6 +52,12 @@ def choose_version(available_versions):
     choice = input(f"choose version [{versions[0]}-{versions[-1]}] -> ")
     available_versions = versions
     return choice
+
+
+def download_server(server, version=None):
+    if version is None:
+        version = choose_version()
+    run(["./download.sh", version, get_server_dir(server)])
 
 
 # getting versions

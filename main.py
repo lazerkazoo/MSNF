@@ -3,6 +3,7 @@ from subprocess import run
 from helper import (
     choose_server,
     choose_version,
+    download_server,
     get_server_dir,
     print_servers,
     start_server,
@@ -22,20 +23,9 @@ def start():
     start_server(choice)
 
 
-def update():
-    server = choose_server()
-    version = choose_version(available_versions)
-    if version is None:
-        return
-    run(["./download.sh", version, get_server_dir(server)])
-
-
-def download():
-    name = input("server name -> ")
-    version = choose_version(available_versions)
-    if version is None:
-        return
-    run(["./download.sh", version, get_server_dir(name)])
+def download(updating=False):
+    name = choose_server() if updating else input("server name -> ")
+    download_server(name)
 
 
 def main():
@@ -54,7 +44,7 @@ def main():
         "start": start,
         "download": download,
         "install": download,
-        "update": update,
+        "update": lambda: download(True),
         "list": print_servers,
         "delete": remove,
         "remove": remove,
