@@ -28,6 +28,5 @@ def main():
 
 
 if __name__ == "__main__":
-    available_versions = None
     print("type 'help' for available operations")
     main()

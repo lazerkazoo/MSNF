@@ -67,13 +67,10 @@ def get_available_versions():
     return [v for v, ok in zip(versions, results) if ok]
 
 
-def choose_version(available_versions=None):
+def choose_version():
     print("getting available versions...")
-    versions = (
-        get_available_versions() if available_versions is None else available_versions
-    )
+    versions = get_available_versions()
     choice = input(f"choose version [{versions[0]}-{versions[-1]}] -> ")
-    available_versions = versions
     return choice
 
 
