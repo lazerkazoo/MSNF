@@ -19,6 +19,10 @@ def get_servers():
     return listdir(f"{expanduser('~')}/Documents/Servers")
 
 
+def get_server_dir(server):
+    return f"{expanduser('~')}/Documents/Servers/{server}"
+
+
 def print_servers():
     print()
     servers = get_servers()

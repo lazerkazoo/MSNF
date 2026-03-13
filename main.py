@@ -1,9 +1,9 @@
-from os.path import expanduser
 from subprocess import run
 
 from helper import (
     choose_server,
     choose_version,
+    get_server_dir,
     print_servers,
     start_server,
 )
@@ -14,7 +14,7 @@ print("type 'help' for available operations")
 
 def remove():
     choice = choose_server()
-    run(["rm", "-rf", f"{expanduser('~')}/Documents/Servers/{choice}"])
+    run(["rm", "-rf", get_server_dir(choice)])
 
 
 def start():
@@ -27,13 +27,7 @@ def update():
     version = choose_version(available_versions)
     if version is None:
         return
-    run(
-        [
-            "./download.sh",
-            version,
-            f"{expanduser('~')}/Documents/Servers/{server}",
-        ]
-    )
+    run(["./download.sh", version, get_server_dir(server)])
 
 
 def download():
@@ -41,21 +35,29 @@ def download():
     version = choose_version(available_versions)
     if version is None:
         return
-    run(["./download.sh", version, f"{expanduser('~')}/Documents/Servers/{name}"])
+    run(["./download.sh", version, get_server_dir(name)])
 
 
 def main():
     options = {
         "help": lambda: print(
-            "\nstart - start a server\nlist - list servers\nclear - clear the screen\ndownload/install - download and install a server.jar file\nupdate - update a server\ndelete/remove - remove a server\nexit - exit the program\n"
+            """
+    start - start a server
+    download/install - download and install a server.jar file
+    update - update a server
+    list - list servers
+    delete/remove - remove a server
+    clear - clear the screen
+    exit - exit the program
+            """
         ),
-        "delete": remove,
-        "remove": remove,
         "start": start,
-        "list": print_servers,
         "download": download,
         "install": download,
         "update": update,
+        "list": print_servers,
+        "delete": remove,
+        "remove": remove,
         "clear": lambda: run("clear"),
         "exit": exit,
     }

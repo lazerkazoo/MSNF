@@ -1,12 +1,7 @@
 #!/usr/bin/env sh
 
 PROJECT="paper"
-MINECRAFT_VERSION=""
-if [ $1 ]; then
-	MINECRAFT_VERSION=$1
-else
-	MINECRAFT_VERSION="1.21.11"
-fi
+MINECRAFT_VERSION=$1
 
 USER_AGENT="cool-project/1.0.0 (contact@me.com)"
 
@@ -59,6 +54,7 @@ if [ "$PAPERMC_URL" != "null" ]; then
 echo "#!/usr/bin/env sh
 java -Xms1G -Xmx4G -jar $2/server.jar --nogui" > "$2/startup.sh"
   echo "eula=true" > "$2/eula.txt"
+  echo "{\"version\": \"$1\"}" > "$2/version.json"
   chmod +x "$2/startup.sh"
 else
 	echo "No stable builds available for any version :("
