@@ -1,0 +1,78 @@
+from concurrent.futures import ThreadPoolExecutor
+from json import dump, load, loads
+from os import listdir
+from os.path import expanduser
+from subprocess import call, check_output, run
+
+
+def load_json(fp):
+    with open(fp, "r") as f:
+        return load(f)
+
+
+def save_json(fp, obj):
+    with open(fp, "w") as f:
+        dump(obj, f)
+
+
+# getting versions
+def get_versions():
+    run(
+        [
+            "curl",
+            "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json",
+            "--output",
+            "dog.json",
+            "-s",
+        ]
+    )
+    return load_json("dog.json")
+
+
+def get_latest_version():
+    js = get_versions()
+    return js["latest"]["release"]
+
+
+def get_all_versions():
+    js = get_versions()
+    versions: list = []
+    for i in js["versions"]:
+        if i["type"] == "release":
+            versions.append(i["id"])
+    versions.reverse()
+    return versions
+
+
+def get_available_versions():
+    versions = get_all_versions()
+    with ThreadPoolExecutor(max_workers=20) as executor:
+        results = list(executor.map(check_version_ok, versions))
+    return [v for v, ok in zip(versions, results) if ok]
+
+
+def check_version_ok(version):
+    data = loads(
+        check_output(
+            [
+                "curl",
+                f"https://fill.papermc.io/v3/projects/paper/versions/{version}/builds",
+                "-s",
+            ]
+        )
+    )
+    if isinstance(data, dict):
+        return data.get("ok", True)
+    return True
+
+
+# startup servers
+def get_servers():
+    return listdir(f"{expanduser('~')}/Documents/Servers")
+
+
+def start_server(server):
+    run(
+        ["tmux", "-c", "./startup.sh"],
+        cwd=f"{expanduser('~')}/Documents/Servers/{server}/",
+    )
