@@ -10,5 +10,5 @@ python main.py
 - [x] run server
 - [x] update mc version
 - [x] download plugins from site
+- [x] update plugins
 - [ ] update papermc version
-- [ ] update plugins

@@ -28,10 +28,13 @@ def print_list(lst):
     print()
 
 
-def choose(options):
+def choose(options, auto=True):
+    if len(options) == 1 and auto:
+        print(f"chose {options[0]} [no other options]")
+        return options[0]
+
     print_list(options)
-    choice = input("choose -> ")
-    choice = int(choice)
+    choice = int(input("choose -> "))
     return options[choice - 1]
 
 
@@ -42,11 +45,11 @@ def get_versions():
             "curl",
             "-s",
             "-o",
-            "dog.json",
+            "/tmp/idk.json",
             "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json",
         ]
     )
-    return load_json("dog.json")
+    return load_json("/tmp/idk.json")
 
 
 def get_latest_version():
@@ -154,6 +157,9 @@ def remove_plugin(server=None, plugin=None):
 
 
 def search_plugins(query, mc):
+    for n, i in enumerate(query):
+        if i == " ":
+            query = query[:n:]
     return loads(
         check_output(
             [
@@ -165,13 +171,13 @@ def search_plugins(query, mc):
     )
 
 
-def search_versions(project_data):
+def search_versions(slug):
     return loads(
         check_output(
             [
                 "curl",
                 "-s",
-                f"https://api.modrinth.com/v2/project/{project_data['slug']}/version?include_changelog=false",
+                f"https://api.modrinth.com/v2/project/{slug}/version?include_changelog=false",
             ]
         )
     )
@@ -183,7 +189,14 @@ def remove_unwanted_versions(versions, mc):
             versions.remove(v)
 
 
-def download_plugin(versions, slug, server):
+def download_plugin(slug, server):
+    versions = search_versions(slug)
+    remove_unwanted_versions(versions, get_server_version(server))
+
     newest = versions[0]["files"][0]
     url = newest["url"]
-    run(["curl", "-s", "-o", f"{get_server_dir(server)}/plugins/{slug}.jar", url])
+    run(["curl", "-o", f"{get_server_dir(server)}/plugins/{slug}.jar", url])
+
+
+def update_plugin(server, plugin):
+    download_plugin(plugin.split(".")[0], server)

@@ -11,28 +11,22 @@ from helper import (
     get_servers,
     print_list,
     remove_plugin,
-    remove_unwanted_versions,
     search_plugins,
-    search_versions,
     start_server,
+    update_plugin,
 )
+
+
+def update_plugins():
+    server = choose_server()
+    for i in get_plugins(server):
+        update_plugin(server, i)
 
 
 def install_plugin():
     server = choose_server()
-    version = get_server_version(server)
-    query = input("search for -> ")
-
-    hits = search_plugins(query, version)["hits"]
-    project_data = choose(hits)
-    versions = search_versions(project_data)
-    remove_unwanted_versions(versions, version)
-
-    download_plugin(
-        versions,
-        project_data["slug"],
-        server,
-    )
+    hits = search_plugins(input("search for -> "), get_server_version(server))["hits"]
+    download_plugin(choose(hits, False)["slug"], server)
 
 
 def main():
@@ -47,6 +41,7 @@ def main():
         "exit": exit,
         "plugin help": lambda: print(open("help-plugin.txt").read()),
         "plugin install": install_plugin,
+        "plugin update": update_plugins,
         "plugin list": lambda: print_list(get_plugins()),
         "plugin remove": remove_plugin,
     }
