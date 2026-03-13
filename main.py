@@ -22,7 +22,7 @@ def main():
         "clear": lambda: run("clear"),
         "exit": exit,
     }
-    operation = input("operation -> ")
+    operation = input("> ")
     options[operation]()
     main()
 
