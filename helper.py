@@ -40,15 +40,7 @@ def choose(options, auto=True):
 
 # Version retrieval
 def get_versions():
-    run(
-        [
-            "curl",
-            "-s",
-            "-o",
-            "/tmp/idk.json",
-            "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json",
-        ]
-    )
+    run(["sh", "helpers/mcversions_getter.sh"])
     return load_json("/tmp/idk.json")
 
 
@@ -68,15 +60,7 @@ def get_all_versions():
 
 
 def check_version_ok(version):
-    data = loads(
-        check_output(
-            [
-                "curl",
-                "-s",
-                f"https://fill.papermc.io/v3/projects/paper/versions/{version}/builds",
-            ]
-        )
-    )
+    data = loads(check_output(["sh", "helpers/check-ok.sh", version]))
     if isinstance(data, dict):
         return data.get("ok", True)
     return True
@@ -122,14 +106,14 @@ def download_server(server=None, version=None):
         server = input("server name -> ")
     if version is None:
         version = choose_version()
-    run(["./download.sh", version, get_server_dir(server)])
+    run(["sh", "helpers/download.sh", version, get_server_dir(server)])
 
 
 def start_server(server=None):
     if server is None:
         server = choose_server()
     run(
-        "./startup.sh",
+        ["sh", "startup.sh"],
         cwd=f"{expanduser('~')}/Documents/Servers/{server}/",
     )
 
@@ -160,27 +144,11 @@ def search_plugins(query, mc):
     for n, i in enumerate(query):
         if i == " ":
             query = query[:n:]
-    return loads(
-        check_output(
-            [
-                "curl",
-                "-s",
-                f"https://api.modrinth.com/v2/search?query={query}&limit=5&facets=%5B%5B%22project_type%3Aplugin%22%5D%2C%5B%22categories%3Apaper%22%5D%2C%5B%22versions%3A{mc}%22%5D%5D",
-            ]
-        )
-    )
+    return loads(check_output(["sh", "helpers/plugin-search.sh", query, mc]))
 
 
 def search_versions(slug):
-    return loads(
-        check_output(
-            [
-                "curl",
-                "-s",
-                f"https://api.modrinth.com/v2/project/{slug}/version?include_changelog=false",
-            ]
-        )
-    )
+    return loads(check_output(["sh", "helpers/versions-search.sh", slug]))
 
 
 def remove_unwanted_versions(versions, mc):

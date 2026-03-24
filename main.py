@@ -1,4 +1,6 @@
+from os import execv
 from subprocess import run
+from sys import argv, executable
 
 from helper import (
     choose,
@@ -16,15 +18,15 @@ from helper import (
     update_plugin,
 )
 
+server = choose_server()
+
 
 def update_plugins():
-    server = choose_server()
     for i in get_plugins(server):
         update_plugin(server, i)
 
 
 def install_plugin():
-    server = choose_server()
     hits = search_plugins(input("search for -> "), get_server_version(server))["hits"]
     download_plugin(choose(hits, False)["slug"], server)
 
@@ -32,9 +34,10 @@ def install_plugin():
 def main():
     options = {
         "help": lambda: print(open("help.txt").read()),
-        "start": start_server,
+        "start": lambda: start_server(server),
         "install": download_server,
-        "update": lambda: download_server(choose_server()),
+        "restart": lambda: execv(executable, ["python"] + argv),
+        "update": lambda: download_server(),
         "list": lambda: print_list(get_servers()),
         "remove": lambda: run(["rm", "-rf", get_server_dir()]),
         "clear": lambda: run("clear"),

@@ -1,5 +1,3 @@
-#!/usr/bin/env sh
-
 PROJECT="paper"
 MINECRAFT_VERSION=$1
 
@@ -51,8 +49,7 @@ if [ "$PAPERMC_URL" != "null" ]; then
 	mkdir -p "$2/plugins/"
 	curl -o "$2/server.jar" $PAPERMC_URL
 	echo "Download completed (version: $FOUND_VERSION)"
-echo "#!/usr/bin/env sh
-java -Xms1G -Xmx4G -jar $2/server.jar" > "$2/startup.sh"
+	echo "java -Xms1G -Xmx4G -jar server.jar" > "$2/startup.sh"
   echo "eula=true" > "$2/eula.txt"
   echo "{\"version\": \"$1\"}" > "$2/version.json"
   chmod +x "$2/startup.sh"
