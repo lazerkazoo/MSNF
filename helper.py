@@ -106,9 +106,9 @@ def choose_server():
 # Server management
 def download_server(server=None, version=None, args=[]):
     if len(args) > 0:
-        server = args[0]
+        server = args[0] if server is None else server
         if len(args) > 1:
-            version = args[1]
+            version = args[1] if version is None else version
     if server is None:
         server = input("server name -> ")
     if version is None:

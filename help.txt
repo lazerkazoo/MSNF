@@ -5,7 +5,7 @@ plugin help - list all plugin options
 select - select a different server
 start - start selected server
 install [server name] [mc version] - download a server.jar file
-update [mc version] - update selected server
+update - update selected server
 list - list servers
 remove - remove a server
 clear - clear the screen

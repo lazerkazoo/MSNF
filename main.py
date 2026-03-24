@@ -23,7 +23,6 @@ args = []
 
 
 def update_plugins():
-    global args
     for i in get_plugins(server):
         update_plugin(server, i)
 
@@ -46,7 +45,7 @@ def main():
         "select": lambda: execv(executable, ["python"] + argv + ["no"]),
         "install": lambda: download_server(args=args),
         "restart": lambda: [run("clear"), execv(executable, ["python"] + argv)],
-        "update": lambda: download_server(server),
+        "update": lambda: [download_server(server), update_plugins()],
         "list": lambda: print_list(get_servers()),
         "remove": lambda: run(["rm", "-rf", get_server_dir()]),
         "clear": lambda: run("clear"),
