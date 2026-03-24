@@ -28,10 +28,13 @@ def print_list(lst):
     print()
 
 
-def choose(options, auto=True):
+def choose(options: list | dict, auto=True):
     if len(options) == 1 and auto:
         print(f"chose {options[0]} [no other options]")
         return options[0]
+    elif len(options) == 0:
+        print("nothing to choose")
+        return ""
 
     print_list(options)
     choice = int(input("choose -> "))
@@ -40,7 +43,7 @@ def choose(options, auto=True):
 
 # Version retrieval
 def get_versions():
-    run(["sh", "helpers/mcversions_getter.sh"])
+    run(["sh", "helpers/mcversions-getter.sh"])
     return load_json("/tmp/idk.json")
 
 
@@ -123,13 +126,17 @@ def get_plugins(server=None):
     if server is None:
         server = choose_server()
     plugins_dir = f"{get_server_dir(server)}/plugins/"
-    return listdir(plugins_dir)
+    plugins: list = listdir(plugins_dir)
+    for i in plugins:
+        if not i.endswith(".jar"):
+            plugins.remove(i)
+    return plugins
 
 
 def choose_plugin(server=None):
     if server is None:
         server = choose_server()
-    return choose(get_plugins(server))
+    return choose(get_plugins(server), False)
 
 
 def remove_plugin(server=None, plugin=None):

@@ -36,8 +36,8 @@ def main():
         "help": lambda: print(open("help.txt").read()),
         "start": lambda: start_server(server),
         "install": download_server,
-        "restart": lambda: execv(executable, ["python"] + argv),
-        "update": lambda: download_server(),
+        "restart": lambda: [run("clear"), execv(executable, ["python"] + argv)],
+        "update": lambda: download_server(server),
         "list": lambda: print_list(get_servers()),
         "remove": lambda: run(["rm", "-rf", get_server_dir()]),
         "clear": lambda: run("clear"),
@@ -45,8 +45,8 @@ def main():
         "plugin help": lambda: print(open("help-plugin.txt").read()),
         "plugin install": install_plugin,
         "plugin update": update_plugins,
-        "plugin list": lambda: print_list(get_plugins()),
-        "plugin remove": remove_plugin,
+        "plugin list": lambda: print_list(get_plugins(server)),
+        "plugin remove": lambda: remove_plugin(server),
     }
     operation = input("> ")
     options[operation]()
