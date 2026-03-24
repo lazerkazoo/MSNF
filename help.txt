@@ -6,6 +6,7 @@ select - select a different server
 start - start selected server
 install [server name] [mc version] - download a server.jar file
 update - update selected server
+paper update - update papermc version
 list - list servers
 remove - remove a server
 clear - clear the screen

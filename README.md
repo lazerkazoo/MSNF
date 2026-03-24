@@ -11,4 +11,4 @@ python main.py
 - [x] update mc version
 - [x] download plugins from site
 - [x] update plugins
-- [ ] update papermc version
+- [x] update papermc version

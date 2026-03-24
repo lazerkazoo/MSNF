@@ -46,6 +46,10 @@ def main():
         "install": lambda: download_server(args=args),
         "restart": lambda: [run("clear"), execv(executable, ["python"] + argv)],
         "update": lambda: [download_server(server), update_plugins()],
+        "paper update": lambda: [
+            download_server(server, get_server_version(server)),
+            update_plugins(),
+        ],
         "list": lambda: print_list(get_servers()),
         "remove": lambda: run(["rm", "-rf", get_server_dir()]),
         "clear": lambda: run("clear"),
