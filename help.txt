@@ -2,9 +2,10 @@
 help - show this list
 plugin help - list all plugin options
 
-start - start a server
-install - download a server.jar file
-update - update a server
+select - select a different server
+start - start selected server
+install [server name] [mc version] - download a server.jar file
+update [mc version] - update selected server
 list - list servers
 remove - remove a server
 clear - clear the screen

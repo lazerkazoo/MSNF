@@ -19,23 +19,32 @@ from helper import (
 )
 
 server = choose_server()
+args = []
 
 
 def update_plugins():
+    global args
     for i in get_plugins(server):
         update_plugin(server, i)
 
 
 def install_plugin():
-    hits = search_plugins(input("search for -> "), get_server_version(server))["hits"]
+    global args
+    if len(args) >= 1:
+        search = args[0]
+    else:
+        search = input("search for -> ")
+    hits = search_plugins(search, get_server_version(server))["hits"]
     download_plugin(choose(hits, False)["slug"], server)
 
 
 def main():
+    global args
     options = {
         "help": lambda: print(open("help.txt").read()),
         "start": lambda: start_server(server),
-        "install": download_server,
+        "select": lambda: execv(executable, ["python"] + argv + ["no"]),
+        "install": lambda: download_server(args=args),
         "restart": lambda: [run("clear"), execv(executable, ["python"] + argv)],
         "update": lambda: download_server(server),
         "list": lambda: print_list(get_servers()),
@@ -49,10 +58,22 @@ def main():
         "plugin remove": lambda: remove_plugin(server),
     }
     operation = input("> ")
+    for o in options:
+        if not operation.startswith(o):
+            continue
+        args = operation.split(o)[-1]
+        args = args.split(" ")
+        for a in args:
+            if a in ["", " "]:
+                args.remove(a)
+
+        operation = o
+        break
     options[operation]()
     main()
 
 
 if __name__ == "__main__":
-    print("type 'help' for available operations")
+    if "no" not in argv:
+        print("type 'help' for available operations")
     main()

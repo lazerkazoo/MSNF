@@ -104,7 +104,11 @@ def choose_server():
 
 
 # Server management
-def download_server(server=None, version=None):
+def download_server(server=None, version=None, args=[]):
+    if len(args) > 0:
+        server = args[0]
+        if len(args) > 1:
+            version = args[1]
     if server is None:
         server = input("server name -> ")
     if version is None:
